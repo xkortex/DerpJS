@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  </head>
+
+
+  <body>
+
+    <div class="container">
+      <div class="card card-block mt-2">
+        
+        <h4 class="card-title">
+          Hello, Bootstrap!
+        </h4>
+        
+        <p class="card-text">This is some card text</p>
+
+        <button class="btn btn-primary">Click me!</button>
+
+        <hr>
+
+        <button class="btn btn-danger">Don't click me!</button>
+      </div>
+
+      <hr>
+
+      <div class="card card-block">
+        <ul class="list-group">
+          <a href='#' data-click='toggle-active' class="list-group-item active">1</a>
+          <a href='#' data-click='toggle-active' class="list-group-item">2</a>
+          <a href='#' data-click='toggle-active' class="list-group-item">3</a>
+          <a href='#' data-click='toggle-active' class="list-group-item">4</a>
+        </ul>
+      </div>
+
+      <hr>
+
+      <div class='card card-block'>
+        <button data-click='rotate-icon' class="btn btn-success">Click Me</button>
+        <hr>
+        <div class='text-center'>
+          <i class="fa fa-2x fa-globe"></i>
+        </div>
+      </div>
+
+      <hr>
+
+      <p class="lead"> Temp:
+        <span id='temp'>000</span>
+      </p>
+
+      <button data-click='set-temp' class="btn btn-primary">SET TEMP</button>
+      <input type="number" class='form-control' name="temp" value=100 >
+
+
+      <div id='root'></div>
+
+    </div>
+
+
+    <!-- jQuery include -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.js'></script>
+
+    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.js'></script>
+
+    <!--Some arbitrary JS-->
+    <script>
+
+        console.log('HELLO FROM JS');
+
+        // $('button').on('click', function(e){
+        //     $(e.currentTarget).toggleClass('btn-danger btn-primary')
+        // });
+
+        $('[data-click=toggle-active]').on('click', (e) => {
+          $(e.currentTarget).addClass('active').siblings().removeClass('active')
+        });
+
+        $('[data-click=rotate-icon]').on('click', () => {
+          $('.fa-globe').toggleClass('fa-spin');
+          $('#temp').text(getTemp())
+        });
+
+        function getTemp(){
+          jQuery.ajax({
+            url: '/get_temperature'
+          }).done((resp) => {
+          
+            console.log('got temp')
+            $('#temp').text(resp.temp)
+          
+          }).fail( (resp) => {
+          
+            console.log('Error!')
+            $('#temp').text('Error.')
+
+          })
+            return resp.temp;
+        }
+
+        
+        // setInterval(getTemp, 5000);
+
+        // // // // 
+
+        function setTemp(tempVal){
+          obj = { 'temp': tempVal };
+
+          jQuery.ajax({
+            url: '/set_temperature',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify(obj),
+            contentType: "application/json; charset=utf-8",
+          }).done((resp) => {
+          
+            console.log('DONE')
+            // $('#temp').text(resp.temp)
+          
+          }).fail( (resp) => {
+          
+            console.log('Error!')
+            // $('#temp').text('Error.')
+
+          })
+
+        };
+
+        $('[data-click=set-temp]').on('click', () => {
+          console.log('SET TEMP')
+
+          // Gets value from text input field
+          let val = $('input').val();
+          console.log(val)
+
+          setTemp(val);
+
+        });
+      
+        // ReactDOM.render(
+        //   <h1>Hello, world!<h1 />,
+        //   document.getElementById('root')
+        // );
+
+
+    </script>
+
+  </body>
+</html>
